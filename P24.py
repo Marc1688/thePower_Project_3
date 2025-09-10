@@ -4,9 +4,10 @@
 from functools import reduce
 
 def diferencia_total(numeros):
-    # Usar reduce para restar todos los elementos
-    diferencia = reduce(lambda acc, x: acc - x, numeros)
-    return diferencia
+    if not numeros:
+        return 0  # O lanzar excepción si prefieres
+    # Iniciamos el acumulador en el primer elemento, o bien en 0:
+    return reduce(lambda acc, x: acc - x, numeros, 0)
 
 # Ejemplo de uso
 lista_numeros = [100, 20, 30]
