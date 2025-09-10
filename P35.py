@@ -8,20 +8,21 @@ class UsuarioBanco:
         self.tiene_cuenta_corriente = tiene_cuenta_corriente
 
     def retirar_dinero(self, cantidad):
-        if cantidad > self.saldo:
-            raise ValueError(f"No hay suficiente saldo para retirar {cantidad}. Saldo actual: {self.saldo}")
+        # Si no tiene cuenta corriente, no permitir saldo negativo
+        disponible = self.saldo if not self.tiene_cuenta_corriente else self.saldo + 0  # ajustar límite si hay descubierto
+        if cantidad > disponible:
+            raise ValueError(f"No hay saldo suficiente. Disponible: {disponible}")
         self.saldo -= cantidad
 
     def transferir_dinero(self, otro_usuario, cantidad):
         if not isinstance(otro_usuario, UsuarioBanco):
-            raise TypeError("El destinatario debe ser una instancia de UsuarioBanco.")
-        if cantidad > self.saldo:
-            raise ValueError(f"No hay suficiente saldo para transferir {cantidad}. Saldo actual: {self.saldo}")
-        # Transferencia
+            raise TypeError("Destino debe ser UsuarioBanco.")
         self.retirar_dinero(cantidad)
         otro_usuario.agregar_dinero(cantidad)
 
     def agregar_dinero(self, cantidad):
+        if cantidad < 0:
+            raise ValueError("Cantidad a agregar debe ser positiva.")
         self.saldo += cantidad
 
 # Caso de uso:
