@@ -1,11 +1,20 @@
 # Pregunta 32:
 # Crea una función que tome un nombre completo y una lista de empleados, busque el nombre completo en la lista y devuelva el puesto del empleado si está en la lista, de lo contrario, devuelve un mensaje indicando que la persona no trabaja aquí.
 
+import unicodedata
+
+def _normalizar(texto):
+    # Elimina acentos y otros diacríticos
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', texto.lower())
+        if unicodedata.category(c) != 'Mn'
+    )
+
 def buscar_puesto(nombre_completo, empleados):
-    # empleados es una lista de diccionarios con 'nombre' y 'puesto'
-    for empleado in empleados:
-        if empleado['nombre'].lower() == nombre_completo.lower():
-            return f"{nombre_completo} trabaja como {empleado['puesto']}."
+    nombre_norm = _normalizar(nombre_completo)
+    for e in empleados:
+        if _normalizar(e['nombre']) == nombre_norm:
+            return f"{nombre_completo} trabaja como {e['puesto']}."
     return f"{nombre_completo} no trabaja aquí."
 
 # Ejemplo de uso
