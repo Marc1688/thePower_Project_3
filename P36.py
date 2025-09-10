@@ -1,37 +1,39 @@
 # Pregunta 36: 
 # Funciones para procesar un texto según diferentes opciones.
 
+import re
+
+def _tokenizar(texto):
+    # Convierte a minúsculas, elimina puntuación y divide
+    limpio = re.sub(r'[^\w\s]', '', texto.lower())
+    return limpio.split()
+
 def contar_palabras(texto):
-    """Cuenta la cantidad de veces que aparece cada palabra en el texto."""
-    palabras = texto.lower().split()
+    palabras = _tokenizar(texto)
     conteo = {}
-    for palabra in palabras:
-        conteo[palabra] = conteo.get(palabra, 0) + 1
+    for p in palabras:
+        conteo[p] = conteo.get(p, 0) + 1
     return conteo
 
-def reemplazar_palabras(texto, palabra_original, palabra_nueva):
-    """Reemplaza todas las ocurrencias de palabra_original por palabra_nueva en el texto."""
-    palabras = texto.split()
-    palabras_reemplazadas = [palabra_nueva if p == palabra_original else p for p in palabras]
-    return ' '.join(palabras_reemplazadas)
+def reemplazar_palabras(texto, orig, nuevo):
+    # Para reemplazar coincidencias exactas, trabajamos sobre tokens
+    tokens = _tokenizar(texto)
+    return ' '.join(nuevo if t == orig.lower() else t for t in tokens)
 
-def eliminar_palabra(texto, palabra_eliminar):
-    """Elimina todas las ocurrencias de palabra_eliminar del texto."""
-    palabras = texto.split()
-    palabras_filtradas = [p for p in palabras if p != palabra_eliminar]
-    return ' '.join(palabras_filtradas)
+def eliminar_palabra(texto, palabra):
+    tokens = _tokenizar(texto)
+    return ' '.join(t for t in tokens if t != palabra.lower())
 
 def procesar_texto(texto, opcion, *args):
-    """Procesa el texto según la opción especificada."""
     if opcion == "contar":
         return contar_palabras(texto)
     elif opcion == "reemplazar":
         if len(args) != 2:
-            raise ValueError("Reemplazar requiere dos argumentos: palabra_original y palabra_nueva.")
+            raise ValueError("Reemplazar requiere: (palabra_original, palabra_nueva)")
         return reemplazar_palabras(texto, args[0], args[1])
     elif opcion == "eliminar":
         if len(args) != 1:
-            raise ValueError("Eliminar requiere un argumento: palabra_eliminar.")
+            raise ValueError("Eliminar requiere: (palabra_eliminar,)")
         return eliminar_palabra(texto, args[0])
     else:
         raise ValueError("Opción inválida. Use 'contar', 'reemplazar' o 'eliminar'.")
